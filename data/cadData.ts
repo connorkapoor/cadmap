@@ -12,7 +12,7 @@ export const nodes: CadNode[] = [
     type: 'company',
     tags: ['commercial', 'kernel-provider'],
     url: 'https://www.sw.siemens.com',
-    description: 'Siemens Digital Industries Software. Owns Parasolid (the world\'s most licensed B-rep kernel), Sequoia, NX, and SolidEdge.',
+    description: 'Siemens Digital Industries Software. Owns Parasolid (the world\'s most licensed B-rep kernel), NX, and SolidEdge.',
   },
   {
     id: 'ptc',
@@ -338,14 +338,6 @@ export const nodes: CadNode[] = [
     tags: ['open-source', 'free', 'parametric'],
     url: 'https://solvespace.com',
     description: 'The constraint solver and geometry kernel from SolveSpace. Used by Dune3D and the CAD Sketcher Blender addon.',
-  },
-  {
-    id: 'sequoia',
-    name: 'Sequoia',
-    type: 'kernel',
-    tags: ['commercial', 'kernel-provider'],
-    url: 'https://www.sw.siemens.com',
-    description: 'Siemens\'s convergent modeling kernel bridging B-rep and facet/mesh representations. Enables mixed-mode geometry in NX.',
   },
   {
     id: 'kcl',
@@ -991,7 +983,6 @@ export const links: CadLink[] = [
 
   // ── Company owns Kernel ──────────────────────────────────
   { source: 'siemens',     target: 'parasolid',      relationship: 'owns' },
-  { source: 'siemens',     target: 'sequoia',        relationship: 'owns' },
   { source: 'ptc',         target: 'granite',        relationship: 'owns' },
   { source: 'autodesk',    target: 'shapemanager',   relationship: 'owns' },
   { source: 'dassault',    target: 'cgm',            relationship: 'owns' },
@@ -1035,7 +1026,6 @@ export const links: CadLink[] = [
   { source: 'grasshopper', target: 'rhino',           relationship: 'built-on' },
   { source: 'cad-sketcher',target: 'blender',         relationship: 'built-on' },
   { source: 'build123d',   target: 'cadquery',        relationship: 'built-on' },
-  { source: 'nx',          target: 'sequoia',         relationship: 'uses-kernel' },
 
   // ── New nodes ────────────────────────────────────────────
   { source: 'dirac-company',  target: 'dirac-app',    relationship: 'owns' },
