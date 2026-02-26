@@ -1,65 +1,152 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useMemo, useCallback } from 'react';
+import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
+import { graphData } from '@/data/cadData';
+import { CadNode, NodeType, Tag } from '@/types';
+import FilterSidebar from '@/components/FilterSidebar';
+import NodeCard from '@/components/NodeCard';
+import Legend from '@/components/Legend';
+import ThemeToggle from '@/components/ThemeToggle';
+import { useNodePositions } from '@/hooks/useNodePositions';
+import { RotateCcw, Network } from 'lucide-react';
+
+// Dynamic import to prevent SSR
+const CadGraph = dynamic(() => import('@/components/CadGraph'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-muted-foreground">
+      <Network className="h-8 w-8 animate-pulse" />
+      <span className="text-sm">Loading graph…</span>
+    </div>
+  ),
+});
+
+export default function HomePage() {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+  const { clearPositions } = useNodePositions();
+
+  const [search, setSearch] = useState('');
+  const [typeFilters, setTypeFilters] = useState<Set<NodeType>>(new Set());
+  const [tagFilters, setTagFilters] = useState<Set<Tag>>(new Set());
+  const [selectedNode, setSelectedNode] = useState<CadNode | null>(null);
+
+  const handleTypeToggle = useCallback((type: NodeType) => {
+    setTypeFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
+  }, []);
+
+  const handleTagToggle = useCallback((tag: Tag) => {
+    setTagFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(tag)) next.delete(tag);
+      else next.add(tag);
+      return next;
+    });
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setSearch('');
+    setTypeFilters(new Set());
+    setTagFilters(new Set());
+    setSelectedNode(null);
+  }, []);
+
+  // Compute which node IDs are "active" (highlighted) based on filters
+  const activeNodeIds = useMemo<Set<string>>(() => {
+    const hasFilters =
+      search.trim() !== '' || typeFilters.size > 0 || tagFilters.size > 0;
+    if (!hasFilters) return new Set<string>();
+
+    const matched = new Set<string>();
+    for (const node of graphData.nodes) {
+      const matchesSearch =
+        search.trim() === '' ||
+        node.name.toLowerCase().includes(search.toLowerCase());
+      const matchesType = typeFilters.size === 0 || typeFilters.has(node.type);
+      const matchesTags =
+        tagFilters.size === 0 ||
+        node.tags.some((t) => tagFilters.has(t));
+
+      if (matchesSearch && matchesType && matchesTags) {
+        matched.add(node.id);
+      }
+    }
+    return matched;
+  }, [search, typeFilters, tagFilters]);
+
+  const visibleCount =
+    activeNodeIds.size === 0 ? graphData.nodes.length : activeNodeIds.size;
+
+  const handleResetLayout = useCallback(() => {
+    clearPositions();
+    window.location.reload();
+  }, [clearPositions]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="relative w-screen h-screen overflow-hidden bg-slate-950 dark:bg-slate-950 light:bg-slate-50">
+      {/* Top bar */}
+      <header className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="flex items-center gap-2.5">
+          <Network className="h-5 w-5 text-teal-400" />
+          <span className="font-bold text-base tracking-tight">CadMap</span>
+          <span className="hidden sm:inline text-xs text-muted-foreground border border-border rounded px-1.5 py-0.5">
+            CAD Ecosystem Explorer
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleResetLayout}
+            title="Reset graph layout"
+            className="p-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border hover:bg-accent transition-colors shadow-sm text-muted-foreground hover:text-foreground"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </button>
+          <ThemeToggle />
+        </div>
+      </header>
+
+      {/* Graph — full viewport minus header */}
+      <main className="absolute inset-0 top-12">
+        <CadGraph
+          graphData={graphData}
+          activeNodeIds={activeNodeIds}
+          onNodeClick={setSelectedNode}
+          selectedNodeId={selectedNode?.id ?? null}
+          isDark={isDark}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
       </main>
+
+      {/* Filter sidebar — pointer-events-none on wrapper so the canvas stays interactive;
+          the sidebar's own div carries pointer-events-auto */}
+      <div className="absolute inset-0 top-12 pointer-events-none z-20">
+        <FilterSidebar
+          search={search}
+          onSearchChange={setSearch}
+          typeFilters={typeFilters}
+          onTypeToggle={handleTypeToggle}
+          tagFilters={tagFilters}
+          onTagToggle={handleTagToggle}
+          onReset={handleReset}
+          visibleCount={visibleCount}
+          totalCount={graphData.nodes.length}
+        />
+      </div>
+
+      {/* Node detail card */}
+      {selectedNode && (
+        <NodeCard node={selectedNode} onClose={() => setSelectedNode(null)} />
+      )}
+
+      {/* Legend */}
+      <Legend />
     </div>
   );
 }
