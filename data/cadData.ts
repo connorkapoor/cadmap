@@ -234,9 +234,9 @@ export const nodes: CadNode[] = [
     id: 'zoo-company',
     name: 'Zoo (Mech)',
     type: 'company',
-    tags: ['startup', 'open-source'],
+    tags: ['startup'],
     url: 'https://zoo.dev',
-    description: 'Developer tools company building open-source CAD infrastructure: KittyCAD engine, the KCL scripting language, and hardware design APIs.',
+    description: 'Developer tools company building CAD infrastructure: the KCL modeling app (open-source client), a proprietary GPU-accelerated geometry engine running as a cloud API, and hardware design tooling. The modeling app source is public; the core geometry engine is not.',
   },
   {
     id: 'shapr3d-company',
@@ -847,9 +847,9 @@ export const nodes: CadNode[] = [
     id: 'zoo-app',
     name: 'Zoo (app)',
     type: 'software',
-    tags: ['startup', 'open-source', 'cloud'],
+    tags: ['startup', 'cloud'],
     url: 'https://zoo.dev',
-    description: 'Zoo\'s code-first CAD application powered by the KCL scripting language and the KittyCAD geometry engine.',
+    description: 'Zoo\'s code-first CAD application powered by the KCL scripting language. The client app is open-source on GitHub, but the geometry engine runs as a proprietary cloud API.',
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -1045,6 +1045,10 @@ export const links: CadLink[] = [
   { source: 'dirac-app',      target: 'parasolid',     relationship: 'uses-kernel' },
   { source: 'ntop-inc',       target: 'ntop-kernel',   relationship: 'owns' },
   { source: 'ntop',           target: 'ntop-kernel',   relationship: 'uses-kernel' },
+  { source: 'ntop',           target: 'parasolid',     relationship: 'uses-kernel' },
+  { source: 'mastercam',      target: 'parasolid',     relationship: 'uses-kernel' },
+  { source: 'comsol',         target: 'parasolid',     relationship: 'uses-kernel' },
+  { source: 'vectorworks',    target: 'parasolid',     relationship: 'uses-kernel' },
 ];
 
 export const graphData: GraphData = { nodes, links };
