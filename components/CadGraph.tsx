@@ -49,7 +49,7 @@ interface SectorDef {
   lightLabel: string;
 }
 
-const T = Math.PI / 4; // 45° step
+const T = 2 * Math.PI / 9; // 40° step (9 sectors)
 
 const SECTORS: SectorDef[] = [
   {
@@ -95,20 +95,26 @@ const SECTORS: SectorDef[] = [
     darkLabel: 'rgba(244,114,182,0.7)', lightLabel: 'rgba(157,23,77,0.5)',
   },
   {
-    name: 'Open Source & Implicit',
-    centerAngle: -Math.PI / 2 + 7 * T,  // ~10:30
+    name: 'Open Source & Code-First',
+    centerAngle: -Math.PI / 2 + 7 * T,
     darkBg: 'rgba(20,184,166,0.09)',  lightBg: 'rgba(20,184,166,0.06)',
     darkLabel: 'rgba(45,212,191,0.7)', lightLabel: 'rgba(13,148,136,0.5)',
+  },
+  {
+    name: 'Implicit / SDF',
+    centerAngle: -Math.PI / 2 + 8 * T,
+    darkBg: 'rgba(163,230,53,0.09)',  lightBg: 'rgba(163,230,53,0.06)',
+    darkLabel: 'rgba(163,230,53,0.7)', lightLabel: 'rgba(63,98,18,0.5)',
   },
 ];
 
 // ── Node → sector assignment ───────────────────────────────────────────────────
 
 const NODE_SECTOR: Record<string, number> = {
-  // 0 — B-Rep Kernels (all geometric modeling kernels + pure kernel-provider subsidiaries)
+  // 0 — B-Rep Kernels
   'parasolid': 0, 'granite': 0, 'shapemanager': 0, 'acis': 0, 'cgm': 0,
-  'opencascade': 0, 'c3d': 0, 'solvespace-kernel': 0, 'sequoia': 0,
-  'kcl': 0, 'libfive': 0, 'ntop-kernel': 0,
+  'opencascade': 0, 'c3d': 0, 'solvespace-kernel': 0,
+  'kcl': 0,
   'spatial-corp': 0, 'c3d-labs': 0,
 
   // 1 — Enterprise Parametric (Siemens / PTC / Dassault flagship tools)
@@ -142,12 +148,16 @@ const NODE_SECTOR: Record<string, number> = {
   'blender': 6, 'zbrush': 6, 'maya': 6, '3ds-max': 6,
   'houdini': 6, 'cinema4d': 6, 'modo': 6, 'wings3d': 6, 'vectary': 6,
 
-  // 7 — Open Source, Code-first & Implicit
-  'zoo-company': 7, 'solve-space-company': 7, 'womp-inc': 7, 'ntop-inc': 7,
+  // 7 — Open Source & Code-First
+  'zoo-company': 7, 'solve-space-company': 7,
   'freecad': 7, 'cadquery': 7, 'build123d': 7, 'openscad': 7,
   'brlcad': 7, 'librecad': 7, 'cascadestudio': 7, 'dune3d': 7,
   'solvespace': 7, 'cad-sketcher': 7, 'zoo-app': 7, 'replicad': 7,
-  'womp': 7, 'ntop': 7,
+
+  // 8 — Implicit / SDF
+  'womp-inc': 8, 'ntop-inc': 8,
+  'womp': 8, 'ntop': 8,
+  'libfive': 8, 'ntop-kernel': 8,
 };
 
 // ── Smooth convex-hull painter ────────────────────────────────────────────────
