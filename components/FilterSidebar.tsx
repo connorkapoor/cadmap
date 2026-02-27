@@ -13,23 +13,33 @@ const NODE_TYPES: { value: NodeType; label: string; color: string }[] = [
   { value: 'software', label: 'Software',  color: 'bg-violet-400 dark:bg-violet-400' },
 ];
 
-const TAGS: { value: Tag; label: string }[] = [
-  { value: 'open-source',     label: 'Open Source' },
-  { value: 'startup',         label: 'Startup' },
-  { value: 'cloud',           label: 'Cloud' },
-  { value: 'free',            label: 'Free' },
-  { value: 'commercial',      label: 'Commercial' },
-  { value: 'parametric',      label: 'Parametric' },
-  { value: 'direct',          label: 'Direct Edit' },
-  { value: 'implicit',        label: 'Implicit / SDF' },
-  { value: 'procedural',      label: 'Procedural' },
-  { value: 'mesh',            label: 'Mesh / Poly' },
-  { value: 'sculpt',          label: 'Sculpting' },
-  { value: 'bim',             label: 'BIM' },
-  { value: 'simulation',      label: 'Simulation' },
-  { value: 'cam',             label: 'CAM' },
-  { value: 'pcb',             label: 'PCB / EDA' },
-  { value: 'kernel-provider', label: 'Kernel Provider' },
+const TAG_GROUPS: { label: string; tags: { value: Tag; label: string }[] }[] = [
+  {
+    label: 'License & Business',
+    tags: [
+      { value: 'open-source',     label: 'Open Source' },
+      { value: 'commercial',      label: 'Commercial' },
+      { value: 'free',            label: 'Free' },
+      { value: 'startup',         label: 'Startup' },
+      { value: 'cloud',           label: 'Cloud' },
+      { value: 'kernel-provider', label: 'Kernel Provider' },
+    ],
+  },
+  {
+    label: 'Modeling Paradigm',
+    tags: [
+      { value: 'parametric',  label: 'Parametric' },
+      { value: 'direct',      label: 'Direct Edit' },
+      { value: 'implicit',    label: 'Implicit / SDF' },
+      { value: 'procedural',  label: 'Procedural' },
+      { value: 'mesh',        label: 'Mesh / Poly' },
+      { value: 'sculpt',      label: 'Sculpting' },
+      { value: 'bim',         label: 'BIM' },
+      { value: 'simulation',  label: 'Simulation' },
+      { value: 'cam',         label: 'CAM' },
+      { value: 'pcb',         label: 'PCB / EDA' },
+    ],
+  },
 ];
 
 interface Props {
@@ -121,32 +131,34 @@ export default function FilterSidebar({
             </div>
 
             {/* Tags */}
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
-                Tags
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {TAGS.map(({ value, label }) => {
-                  const isActive = tagFilters.has(value);
-                  return (
-                    <button
-                      key={value}
-                      onClick={() => onTagToggle(value)}
-                      className={`
-                        text-xs px-2 py-1 rounded-full border transition-colors font-medium
-                        ${
-                          isActive
-                            ? 'bg-primary text-primary-foreground border-primary'
-                            : 'bg-transparent border-border text-muted-foreground hover:border-primary/60 hover:text-foreground'
-                        }
-                      `}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
+            {TAG_GROUPS.map((group) => (
+              <div key={group.label}>
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
+                  {group.label}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {group.tags.map(({ value, label }) => {
+                    const isActive = tagFilters.has(value);
+                    return (
+                      <button
+                        key={value}
+                        onClick={() => onTagToggle(value)}
+                        className={`
+                          text-xs px-2 py-1 rounded-full border transition-colors font-medium
+                          ${
+                            isActive
+                              ? 'bg-primary text-primary-foreground border-primary'
+                              : 'bg-transparent border-border text-muted-foreground hover:border-primary/60 hover:text-foreground'
+                          }
+                        `}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
 
           {/* Footer */}
