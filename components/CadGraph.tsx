@@ -158,6 +158,15 @@ const NODE_SECTOR: Record<string, number> = {
   'womp-inc': 8, 'ntop-inc': 8,
   'womp': 8, 'ntop': 8,
   'libfive': 8, 'ntop-kernel': 8,
+  'openvdb': 8, 'fidget': 8,
+  'hyperganic-company': 8, 'leap71-company': 8, 'intact-solutions-company': 8,
+  'coventor-company': 8, 'oqton-company': 8, 'uformia-company': 8,
+  'implicit-space-company': 8, 'metafold-company': 8, 'gradient-control-labs': 8,
+  'adobe': 8, 'latticerobot-company': 8,
+  'hyperganic-app': 8, 'picogk': 8, 'intact-solutions-app': 8,
+  'coventor-app': 8, 'oqton-app': 8, 'uformia-app': 8,
+  'implicit-space-app': 8, 'metafold-app': 8, 'altair-inspire': 8,
+  'omega': 8, 'adobe-neo': 8, 'latticerobot': 8,
 };
 
 // ── Smooth convex-hull painter ────────────────────────────────────────────────
